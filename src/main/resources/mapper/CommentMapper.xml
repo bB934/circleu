@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.Comment">
+        <id column="comment_id" property="commentId"/>
+        <result column="user_id" property="userId"/>
+        <result column="reply_to_id" property="replyToId"/>
+        <result column="source_table" property="sourceTable"/>
+        <result column="source_field" property="sourceField"/>
+        <result column="source_id" property="sourceId"/>
+        <result column="content" property="content"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        comment_id, user_id, reply_to_id, source_table, source_field, source_id,
+        content, nickname, avatar, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM comments
+        WHERE comment_id = #{commentId}
+    </select>
+
+    <select id="findBySourceId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM comments
+        WHERE source_id = #{sourceId} AND source_table = 'second_hand_mall'
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM comments
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="commentId">
+        INSERT INTO comments (
+            user_id, reply_to_id, source_table, source_field, source_id,
+            content, nickname, avatar
+        ) VALUES (
+            #{userId}, #{replyToId}, #{sourceTable}, #{sourceField}, #{sourceId},
+            #{content}, #{nickname}, #{avatar}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE comments
+        <set>
+            <if test="content != null">content = #{content},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            update_time = NOW()
+        </set>
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM comments WHERE comment_id = #{commentId}
+    </delete>
+
+</mapper>

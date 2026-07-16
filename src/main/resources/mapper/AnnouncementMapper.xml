@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.AnnouncementMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.Announcement">
+        <id column="announcement_id" property="announcementId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        announcement_id, title, content, status, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM announcements
+        WHERE announcement_id = #{announcementId}
+    </select>
+
+    <select id="findByStatus" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM announcements
+        WHERE status = #{status}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM announcements
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="announcementId">
+        INSERT INTO announcements (title, content, status)
+        VALUES (#{title}, #{content}, #{status})
+    </insert>
+
+    <update id="update">
+        UPDATE announcements
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW()
+        </set>
+        WHERE announcement_id = #{announcementId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM announcements WHERE announcement_id = #{announcementId}
+    </delete>
+
+</mapper>

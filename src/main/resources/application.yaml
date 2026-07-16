@@ -1,0 +1,80 @@
+server:
+  port: 8080
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/second_hand_trading?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: ***REDACTED***
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+
+  # Redis 缓存
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+  # RabbitMQ 延迟消息
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+  # Sentinel 流量防卫兵（熔断降级）
+  cloud:
+    sentinel:
+      eager: true
+      transport:
+        # 本地未启动 dashboard 时留空即可，规则由 SentinelConfig 内存加载
+        dashboard: localhost:8080
+        port: 8719
+      web-context-unify: false
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.secondhand.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+
+jwt:
+  secret: secondhand-trading-jwt-secret-key-2024
+  expire: 86400000  # 24小时
+
+logging:
+  level:
+    com.secondhand.mapper: debug
+
+# 自定义配置
+upload:
+  path: /Users/Zhuanz1/Desktop/spring-boot/demo/uploads/  # Mac路径
+  # path: /home/ubuntu/uploads/  # Linux路径
+  # path: C:/uploads/  # Windows路径
+  avatar:
+    url-prefix: http://localhost:8080/uploads/avatar/
+  base-url: http://localhost:8080/uploads/

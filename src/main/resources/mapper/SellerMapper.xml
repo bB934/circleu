@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.SellerMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.Seller">
+        <id column="seller_id" property="sellerId"/>
+        <result column="user_id" property="userId"/>
+        <result column="seller_number" property="sellerNumber"/>
+        <result column="seller_gender" property="sellerGender"/>
+        <result column="seller_age" property="sellerAge"/>
+        <result column="seller_school" property="sellerSchool"/>
+        <result column="seller_address" property="sellerAddress"/>
+        <result column="seller_birthday" property="sellerBirthday"/>
+        <result column="brief_introduction" property="briefIntroduction"/>
+        <result column="examine_state" property="examineState"/>
+        <result column="credit_score" property="creditScore"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        seller_id, user_id, seller_number, seller_gender, seller_age, seller_school,
+        seller_address, seller_birthday, brief_introduction, examine_state,
+        credit_score, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sellers
+        WHERE seller_id = #{sellerId}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sellers
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sellers
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="countByUserIdAndNumber" resultType="int">
+        SELECT COUNT(*)
+        FROM sellers
+        WHERE user_id = #{userId}
+        AND seller_number = #{number}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="sellerId">
+        INSERT INTO sellers (
+            user_id, seller_number, seller_gender, seller_age, seller_school,
+            seller_address, seller_birthday, brief_introduction, examine_state, credit_score
+        ) VALUES (
+            #{userId}, #{sellerNumber}, #{sellerGender}, #{sellerAge}, #{sellerSchool},
+            #{sellerAddress}, #{sellerBirthday}, #{briefIntroduction}, #{examineState}, #{creditScore}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sellers
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="sellerNumber != null">seller_number = #{sellerNumber},</if>
+            <if test="sellerGender != null">seller_gender = #{sellerGender},</if>
+            <if test="sellerAge != null">seller_age = #{sellerAge},</if>
+            <if test="sellerSchool != null">seller_school = #{sellerSchool},</if>
+            <if test="sellerAddress != null">seller_address = #{sellerAddress},</if>
+            <if test="sellerBirthday != null">seller_birthday = #{sellerBirthday},</if>
+            <if test="briefIntroduction != null">brief_introduction = #{briefIntroduction},</if>
+            <if test="examineState != null">examine_state = #{examineState},</if>
+            <if test="creditScore != null">credit_score = #{creditScore},</if>
+            update_time = NOW()
+        </set>
+        WHERE seller_id = #{sellerId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM sellers WHERE seller_id = #{sellerId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,68 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: secondhand-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: second_hand_trading
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./src/main/resources/circleu.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - secondhand-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: secondhand-redis
+    ports:
+      - "6380:6379"
+    networks:
+      - secondhand-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: secondhand-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    networks:
+      - secondhand-network
+
+  app:
+    build: .
+    container_name: secondhand-app
+    ports:
+      - "8081:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/second_hand_trading?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_RABBITMQ_HOST: rabbitmq
+    networks:
+      - secondhand-network
+
+volumes:
+  mysql-data:
+
+networks:
+  secondhand-network:
+    driver: bridge

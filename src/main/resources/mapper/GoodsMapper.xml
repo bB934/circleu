@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.GoodsMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.Goods">
+        <id column="second_hand_mall_id" property="secondHandMallId"/>
+        <result column="seller_id" property="sellerId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="content" property="content"/>
+        <result column="price" property="price"/>
+        <result column="price_ago" property="priceAgo"/>
+        <result column="inventory" property="inventory"/>
+        <result column="hits" property="hits"/>
+        <result column="recommend" property="recommend"/>
+        <result column="status" property="status"/>
+        <result column="cover_img" property="coverImg"/>
+        <result column="img_1" property="img1"/>
+        <result column="img_2" property="img2"/>
+        <result column="img_3" property="img3"/>
+        <result column="img_4" property="img4"/>
+        <result column="img_5" property="img5"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        second_hand_mall_id, seller_id, category_id, title, description, content,
+        price, price_ago, inventory, hits, recommend, status,
+        cover_img, img_1, img_2, img_3, img_4, img_5, remarks,
+        create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT g.*,
+               u.username as seller_name,
+               c.category_name as category_name
+        FROM second_hand_mall g
+        LEFT JOIN sellers s ON g.seller_id = s.seller_id
+        LEFT JOIN users u ON s.user_id = u.user_id
+        LEFT JOIN categories c ON g.category_id = c.category_id
+        WHERE g.second_hand_mall_id = #{goodsId}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM second_hand_mall
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findPage" resultMap="BaseResultMap">
+        SELECT g.*, u.username as seller_name, c.category_name as category_name
+        FROM second_hand_mall g
+        LEFT JOIN sellers s ON g.seller_id = s.seller_id
+        LEFT JOIN users u ON s.user_id = u.user_id
+        LEFT JOIN categories c ON g.category_id = c.category_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (g.title LIKE CONCAT('%', #{keyword}, '%')
+                OR g.description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="categoryId != null and categoryId > 0">
+                AND g.category_id = #{categoryId}
+            </if>
+            <if test="minPrice != null">
+                AND g.price >= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND g.price &lt;= #{maxPrice}
+            </if>
+            <if test="status != null">
+                AND g.status = #{status}
+            </if>
+            <if test="status == null">
+                AND g.status = 1
+            </if>
+        </where>
+        <choose>
+            <when test="sortBy != null and sortBy == 'price_asc'">ORDER BY g.price ASC</when>
+            <when test="sortBy != null and sortBy == 'price_desc'">ORDER BY g.price DESC</when>
+            <when test="sortBy != null and sortBy == 'hits_desc'">ORDER BY g.hits DESC</when>
+            <otherwise>ORDER BY g.create_time DESC</otherwise>
+        </choose>
+    </select>
+
+    <select id="countPage" resultType="int">
+        SELECT COUNT(*)
+        FROM second_hand_mall g
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (g.title LIKE CONCAT('%', #{keyword}, '%')
+                OR g.description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="categoryId != null and categoryId > 0">
+                AND g.category_id = #{categoryId}
+            </if>
+            <if test="minPrice != null">
+                AND g.price >= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND g.price &lt;= #{maxPrice}
+            </if>
+            <if test="status != null">
+                AND g.status = #{status}
+            </if>
+            <if test="status == null">
+                AND g.status = 1
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="secondHandMallId">
+        INSERT INTO second_hand_mall (
+            seller_id, category_id, title, description, content,
+            price, price_ago, inventory, status,
+            cover_img, img_1, img_2, img_3, img_4, img_5, remarks, create_time, update_time
+        ) VALUES (
+            #{sellerId}, #{categoryId}, #{title}, #{description}, #{content},
+            #{price}, #{priceAgo}, #{inventory}, #{status},
+            #{coverImg}, #{img1}, #{img2}, #{img3}, #{img4}, #{img5}, #{remarks}, NOW(), NOW()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE second_hand_mall
+        <set>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="priceAgo != null">price_ago = #{priceAgo},</if>
+            <if test="inventory != null">inventory = #{inventory},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="coverImg != null">cover_img = #{coverImg},</if>
+            <if test="img1 != null">img_1 = #{img1},</if>
+            <if test="img2 != null">img_2 = #{img2},</if>
+            <if test="img3 != null">img_3 = #{img3},</if>
+            <if test="img4 != null">img_4 = #{img4},</if>
+            <if test="img5 != null">img_5 = #{img5},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            update_time = NOW()
+        </set>
+        WHERE second_hand_mall_id = #{secondHandMallId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE second_hand_mall
+        SET status = #{status}, update_time = NOW()
+        WHERE second_hand_mall_id = #{goodsId}
+    </update>
+
+    <update id="updateHits">
+        UPDATE second_hand_mall
+        SET hits = hits + 1
+        WHERE second_hand_mall_id = #{goodsId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM second_hand_mall WHERE second_hand_mall_id = #{goodsId}
+    </delete>
+
+    <select id="findBySellerId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM second_hand_mall
+        WHERE seller_id = #{sellerId}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findRecommend" resultMap="BaseResultMap">
+        SELECT g.*, u.username as seller_name
+        FROM second_hand_mall g
+        LEFT JOIN sellers s ON g.seller_id = s.seller_id
+        LEFT JOIN users u ON s.user_id = u.user_id
+        WHERE g.status = 1
+        ORDER BY g.recommend DESC, g.hits DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectAllOnSaleIds" resultType="java.lang.Long">
+        SELECT second_hand_mall_id FROM second_hand_mall WHERE status = 1
+    </select>
+
+    <select id="selectFirstCovers" resultType="com.secondhand.vo.SellerCoverVO">
+        SELECT seller_id AS sellerId, cover_img AS coverImg
+        FROM second_hand_mall
+        WHERE second_hand_mall_id IN (
+            SELECT MAX(second_hand_mall_id)
+            FROM second_hand_mall
+            WHERE seller_id IN
+            <foreach collection="sellerIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND status = 1
+            GROUP BY seller_id
+        )
+    </select>
+
+</mapper>

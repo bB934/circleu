@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.SignInScoreMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.SignInScore">
+        <id column="sign_in_score_id" property="signInScoreId"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="purchase_user" property="purchaseUser"/>
+        <result column="business" property="business"/>
+        <result column="purchase_goods" property="purchaseGoods"/>
+        <result column="commodity_price" property="commodityPrice"/>
+        <result column="sign_in_status" property="signInStatus"/>
+        <result column="star_rating" property="starRating"/>
+        <result column="remarks" property="remarks"/>
+        <result column="recommend" property="recommend"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        sign_in_score_id, order_number, purchase_user, business, purchase_goods,
+        commodity_price, sign_in_status, star_rating, remarks, recommend,
+        create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sign_in_score
+        WHERE sign_in_score_id = #{signInScoreId}
+    </select>
+
+    <select id="findByOrderNumber" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sign_in_score
+        WHERE order_number = #{orderNumber}
+    </select>
+
+    <select id="findByBusiness" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sign_in_score
+        WHERE business = #{business}
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="signInScoreId">
+        INSERT INTO sign_in_score (
+            order_number, purchase_user, business, purchase_goods,
+            commodity_price, sign_in_status, star_rating, remarks, recommend
+        ) VALUES (
+            #{orderNumber}, #{purchaseUser}, #{business}, #{purchaseGoods},
+            #{commodityPrice}, #{signInStatus}, #{starRating}, #{remarks}, #{recommend}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sign_in_score
+        <set>
+            <if test="signInStatus != null">sign_in_status = #{signInStatus},</if>
+            <if test="starRating != null">star_rating = #{starRating},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="recommend != null">recommend = #{recommend},</if>
+            update_time = NOW()
+        </set>
+        WHERE sign_in_score_id = #{signInScoreId}
+    </update>
+
+</mapper>

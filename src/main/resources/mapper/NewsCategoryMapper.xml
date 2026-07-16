@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.NewsCategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.NewsCategory">
+        <id column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        category_id, category_name, sort_order, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM news_category
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM news_category
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="categoryId">
+        INSERT INTO news_category (category_name, sort_order)
+        VALUES (#{categoryName}, #{sortOrder})
+    </insert>
+
+    <update id="update">
+        UPDATE news_category
+        <set>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            update_time = NOW()
+        </set>
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM news_category WHERE category_id = #{categoryId}
+    </delete>
+
+</mapper>
