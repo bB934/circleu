@@ -25,3 +25,6 @@ Thumbs.db
 # Maven 包装器（本机缺失 wrapper 配置，用本地 mvn）
 .mvn/
 .env
+
+# 本地开发配置(含密码，不入库)
+src/main/resources/application-local.yaml
