@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.NewsMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.News">
+        <id column="news_id" property="newsId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="title" property="title"/>
+        <result column="summary" property="summary"/>
+        <result column="content" property="content"/>
+        <result column="cover_img" property="coverImg"/>
+        <result column="hits" property="hits"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        news_id, category_id, title, summary, content, cover_img, hits, status, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM news
+        WHERE news_id = #{newsId}
+    </select>
+
+    <select id="findPage" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM news
+        WHERE status = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findByCategoryId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM news
+        WHERE category_id = #{categoryId} AND status = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM news
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="newsId">
+        INSERT INTO news (category_id, title, summary, content, cover_img, hits, status)
+        VALUES (#{categoryId}, #{title}, #{summary}, #{content}, #{coverImg}, #{hits}, #{status})
+    </insert>
+
+    <update id="update">
+        UPDATE news
+        <set>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="coverImg != null">cover_img = #{coverImg},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW()
+        </set>
+        WHERE news_id = #{newsId}
+    </update>
+
+    <update id="updateHits">
+        UPDATE news SET hits = hits + 1 WHERE news_id = #{newsId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM news WHERE news_id = #{newsId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.BuyerMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.Buyer">
+        <id column="buyers_id" property="buyersId"/>
+        <result column="user_id" property="userId"/>
+        <result column="buyer_number" property="buyerNumber"/>
+        <result column="buyer_gender" property="buyerGender"/>
+        <result column="buyer_age" property="buyerAge"/>
+        <result column="buyer_school" property="buyerSchool"/>
+        <result column="buyer_address" property="buyerAddress"/>
+        <result column="buyer_birthday" property="buyerBirthday"/>
+        <result column="brief_introduction" property="briefIntroduction"/>
+        <result column="examine_state" property="examineState"/>
+        <result column="recommend" property="recommend"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        buyers_id, user_id, buyer_number, buyer_gender, buyer_age, buyer_school,
+        buyer_address, buyer_birthday, brief_introduction, examine_state,
+        recommend, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM buyers
+        WHERE buyers_id = #{buyersId}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM buyers
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM buyers
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="buyersId">
+        INSERT INTO buyers (
+            user_id, buyer_number, buyer_gender, buyer_age, buyer_school,
+            buyer_address, buyer_birthday, brief_introduction, examine_state, recommend
+        ) VALUES (
+            #{userId}, #{buyerNumber}, #{buyerGender}, #{buyerAge}, #{buyerSchool},
+            #{buyerAddress}, #{buyerBirthday}, #{briefIntroduction}, #{examineState}, #{recommend}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE buyers
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="buyerNumber != null">buyer_number = #{buyerNumber},</if>
+            <if test="buyerGender != null">buyer_gender = #{buyerGender},</if>
+            <if test="buyerAge != null">buyer_age = #{buyerAge},</if>
+            <if test="buyerSchool != null">buyer_school = #{buyerSchool},</if>
+            <if test="buyerAddress != null">buyer_address = #{buyerAddress},</if>
+            <if test="buyerBirthday != null">buyer_birthday = #{buyerBirthday},</if>
+            <if test="briefIntroduction != null">brief_introduction = #{briefIntroduction},</if>
+            <if test="examineState != null">examine_state = #{examineState},</if>
+            <if test="recommend != null">recommend = #{recommend},</if>
+            update_time = NOW()
+        </set>
+        WHERE buyers_id = #{buyersId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM buyers WHERE buyers_id = #{buyersId}
+    </delete>
+
+</mapper>

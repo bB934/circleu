@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.FavoriteMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.Favorite">
+        <id column="favorite_id" property="favoriteId"/>
+        <result column="user_id" property="userId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        favorite_id, user_id, goods_id, create_time
+    </sql>
+
+    <select id="exists" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM favorites
+        WHERE user_id = #{userId} AND goods_id = #{goodsId}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM favorites
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findFavoritesByUserId" resultType="com.secondhand.entity.Goods">
+        SELECT g.*
+        FROM favorites f
+        LEFT JOIN second_hand_mall g ON f.goods_id = g.second_hand_mall_id
+        WHERE f.user_id = #{userId}
+        ORDER BY f.create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="favoriteId">
+        INSERT INTO favorites (user_id, goods_id)
+        VALUES (#{userId}, #{goodsId})
+    </insert>
+
+    <delete id="deleteByUserIdAndGoodsId">
+        DELETE FROM favorites WHERE user_id = #{userId} AND goods_id = #{goodsId}
+    </delete>
+
+    <delete id="deleteByGoodsId">
+        DELETE FROM favorites WHERE goods_id = #{goodsId}
+    </delete>
+
+</mapper>

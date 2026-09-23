@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.SellerApplicationMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.SellerApplication">
+        <id column="application_id" property="applicationId"/>
+        <result column="user_id" property="userId"/>
+        <result column="real_name" property="realName"/>
+        <result column="phone" property="phone"/>
+        <result column="gender" property="gender"/>
+        <result column="age" property="age"/>
+        <result column="school" property="school"/>
+        <result column="address" property="address"/>
+        <result column="birthday" property="birthday"/>
+        <result column="introduction" property="introduction"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM seller_applications WHERE application_id = #{applicationId}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT * FROM seller_applications WHERE user_id = #{userId} ORDER BY create_time DESC LIMIT 1
+    </select>
+
+    <select id="findByUserIdAndStatus" resultMap="BaseResultMap">
+        SELECT * FROM seller_applications WHERE user_id = #{userId} AND status = #{status}
+    </select>
+
+    <select id="findPage" resultMap="BaseResultMap">
+        SELECT * FROM seller_applications
+        <where>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (real_name LIKE CONCAT('%', #{keyword}, '%')
+                OR phone LIKE CONCAT('%', #{keyword}, '%')
+                OR school LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="countPage" resultType="int">
+        SELECT COUNT(*) FROM seller_applications
+        <where>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (real_name LIKE CONCAT('%', #{keyword}, '%')
+                OR phone LIKE CONCAT('%', #{keyword}, '%')
+                OR school LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="applicationId">
+        INSERT INTO seller_applications (
+            user_id, real_name, phone, gender, age,
+            school, address, birthday, introduction, status
+        ) VALUES (
+            #{userId}, #{realName}, #{phone}, #{gender}, #{age},
+            #{school}, #{address}, #{birthday}, #{introduction}, #{status}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE seller_applications
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = NOW()
+        </set>
+        WHERE application_id = #{applicationId}
+    </update>
+
+    <delete id="deleteByUserId">
+        DELETE FROM seller_applications WHERE user_id = #{userId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,93 @@
+// 设计令牌
+$color-primary: #409eff;
+$color-success: #67c23a;
+$color-warning: #e6a23c;
+$color-danger: #f56c6c;
+$color-info: #909399;
+
+$color-text-primary: #303133;
+$color-text-regular: #606266;
+$color-text-secondary: #909399;
+$color-text-placeholder: #c0c4cc;
+$color-text-disabled: #c0c4cc;
+
+$color-bg-page: #f5f7fa;
+$color-bg-white: #fff;
+$color-bg-overlay: #fff;
+
+$border-color: #dcdfe6;
+$border-color-light: #e4e7ed;
+$border-color-lighter: #ebeef5;
+
+$shadow-base: 0 2px 12px rgba(0, 0, 0, 0.04);
+$shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.08);
+$shadow-card: 0 1px 6px rgba(0, 0, 0, 0.04);
+
+$font-size-xs: 10px;
+$font-size-sm: 12px;
+$font-size-base: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+
+$radius-sm: 4px;
+$radius-base: 8px;
+$radius-lg: 12px;
+$radius-full: 9999px;
+
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+$z-index-dropdown: 100;
+$z-index-sticky: 100;
+$z-index-fixed: 100;
+$z-index-modal-backdrop: 200;
+$z-index-modal: 200;
+$z-index-popover: 300;
+$z-index-tooltip: 400;
+
+// 导出为 CSS 变量
+:root {
+  --color-primary: #{$color-primary};
+  --color-success: #{$color-success};
+  --color-warning: #{$color-warning};
+  --color-danger: #{$color-danger};
+  --color-info: #{$color-info};
+
+  --color-text-primary: #{$color-text-primary};
+  --color-text-regular: #{$color-text-regular};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-text-placeholder: #{$color-text-placeholder};
+  --color-text-disabled: #{$color-text-disabled};
+
+  --color-bg-page: #{$color-bg-page};
+  --color-bg-white: #{$color-bg-white};
+  --color-bg-overlay: #{$color-bg-overlay};
+
+  --border-color: #{$border-color};
+  --border-color-light: #{$border-color-light};
+  --border-color-lighter: #{$border-color-lighter};
+
+  --shadow-base: #{$shadow-base};
+  --shadow-hover: #{$shadow-hover};
+  --shadow-card: #{$shadow-card};
+
+  --font-size-xs: #{$font-size-xs};
+  --font-size-sm: #{$font-size-sm};
+  --font-size-base: #{$font-size-base};
+  --font-size-md: #{$font-size-md};
+  --font-size-lg: #{$font-size-lg};
+  --font-size-xl: #{$font-size-xl};
+  --font-size-2xl: #{$font-size-2xl};
+
+  --radius-sm: #{$radius-sm};
+  --radius-base: #{$radius-base};
+  --radius-lg: #{$radius-lg};
+  --radius-full: #{$radius-full};
+
+  --transition-fast: #{$transition-fast};
+  --transition-base: #{$transition-base};
+  --transition-slow: #{$transition-slow};
+}

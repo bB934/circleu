@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.ForumPostMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.ForumPost">
+        <id column="post_id" property="postId"/>
+        <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="category" property="category"/>
+        <result column="hits" property="hits"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        post_id, user_id, title, content, category, hits, status, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM forum_posts
+        WHERE post_id = #{postId}
+    </select>
+
+    <select id="findPage" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM forum_posts
+        WHERE status = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findByCategory" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM forum_posts
+        WHERE category = #{category} AND status = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM forum_posts
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM forum_posts
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="postId">
+        INSERT INTO forum_posts (user_id, title, content, category, status)
+        VALUES (#{userId}, #{title}, #{content}, #{category}, #{status})
+    </insert>
+
+    <update id="update">
+        UPDATE forum_posts
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW()
+        </set>
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="updateHits">
+        UPDATE forum_posts SET hits = hits + 1 WHERE post_id = #{postId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM forum_posts WHERE post_id = #{postId}
+    </delete>
+
+</mapper>

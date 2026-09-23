@@ -1,0 +1,66 @@
+server:
+  port: 8083
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/second_hand_trading?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: nisidingle650
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        import-check:
+          enabled: false
+  main:
+    allow-bean-definition-overriding: true
+rocketmq:
+  name-server: localhost:9876
+  producer:
+    group: secondhand-producer-group
+sentinel:
+  dashboard: localhost:8858
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.secondhand.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+jwt:
+  secret: f19b14f2f2ab5a1b0d69eab16dc21537a60c29b597e48a84d2b3a8f5c5c74c9e
+  expire: 86400000
+logging:
+  level:
+    com.secondhand.mapper: debug
+upload:
+  path: ./uploads/
+  avatar:
+    url-prefix: http://localhost:8080/uploads/avatar/
+  base-url: http://localhost:8080/uploads/

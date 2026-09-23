@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.secondhand.mapper.CategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.secondhand.entity.Category">
+        <id column="category_id" property="categoryId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        category_id, parent_id, category_name, sort_order, create_time, update_time
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM categories
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM categories
+        ORDER BY sort_order ASC, create_time DESC
+    </select>
+
+    <select id="findByParentId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM categories
+        WHERE parent_id = #{parentId}
+        ORDER BY sort_order ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="categoryId">
+        INSERT INTO categories (parent_id, category_name, sort_order)
+        VALUES (#{parentId}, #{categoryName}, #{sortOrder})
+    </insert>
+
+    <update id="update">
+        UPDATE categories
+        <set>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            update_time = NOW()
+        </set>
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM categories WHERE category_id = #{categoryId}
+    </delete>
+
+</mapper>
